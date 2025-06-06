@@ -1,6 +1,6 @@
-# ESMS - Enterprise System Management Solution
+# ESMS - SaaS School Management System
 
-A multi-tenant enterprise system management solution built with Laravel, using Domain-Driven Design principles.
+A multi-tenant SaaS school management system built with Laravel, using Domain-Driven Design principles.
 
 ## Git Setup Instructions
 
@@ -68,9 +68,10 @@ When setting up the project on a new machine:
 
 This application uses the Stancl Tenancy package to implement multi-tenancy. Key configuration:
 
-- Each tenant has its own database
+- Each school (tenant) has its own database
 - Tenant routes are defined in `routes/tenant.php`
 - The system uses domain-based identification with `InitializeTenancyByDomain` middleware
+- Each school can be accessed via their own subdomain
 
 ### Domain-Driven Design Structure
 
