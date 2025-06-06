@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Domain\Superadmin\Repositories\SuperadminRepositoryInterface;
+use App\Domain\Superadmin\Repositories\SuperadminRepository;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Support\ServiceProvider;
 
@@ -12,7 +14,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        // Bind repository interfaces to their concrete implementations
+        $this->app->bind(SuperadminRepositoryInterface::class, SuperadminRepository::class);
     }
 
     /**

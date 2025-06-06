@@ -14,9 +14,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->alias([
             'verified' => \App\Http\Middleware\EnsureEmailIsVerified::class,
-        ]);
-
-        $middleware->alias([
+            'superadmin.auth' => \App\Http\Middleware\Superadmin\SuperadminAuthMiddleware::class,
             'sanctum' => \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
             'tenant' => \Stancl\Tenancy\Middleware\InitializeTenancyByDomain::class,
         ]);

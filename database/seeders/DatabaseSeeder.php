@@ -13,6 +13,12 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        $this->call([
+            SuperadminSeeder::class,
+            SubscriptionPlansSeeder::class,
+            FormFieldsSeeder::class,
+        ]);
+
         // User::factory(10)->create();
 
         User::factory()->create([
