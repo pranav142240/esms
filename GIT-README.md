@@ -12,7 +12,7 @@ To work on this project from a new system:
 
 ```bash
 # Clone the repository
-git clone https://github.com/YOUR-USERNAME/esms.git
+git clone https://github.com/pranav142240/esms.git
 
 # Navigate to the project directory
 cd esms

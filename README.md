@@ -29,7 +29,7 @@ A multi-tenant SaaS school management system built with Laravel, implementing Do
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/YOUR-USERNAME/esms.git
+   git clone https://github.com/pranav142240/esms.git
    cd esms
    ```
 
