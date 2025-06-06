@@ -16,14 +16,14 @@ class SuperadminSeeder extends Seeder
     {
         Superadmin::create([
             'name' => 'System Administrator',
-            'email' => 'superadmin@example.com',
-            'password' => Hash::make('password123'),
+            'email' => 'superadmin@esms.com',
+            'password' => Hash::make('SuperAdmin123!'),
             'email_verified_at' => now(),
             'is_active' => true,
         ]);
 
         $this->command->info('Superadmin created successfully!');
-        $this->command->line('Email: superadmin@example.com');
-        $this->command->line('Password: password123');
+        $this->command->line('Email: superadmin@esms.com');
+        $this->command->line('Password: SuperAdmin123!');
     }
 }

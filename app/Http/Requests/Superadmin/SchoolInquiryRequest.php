@@ -23,7 +23,7 @@ class SchoolInquiryRequest extends FormRequest
         return [
             // Required default fields
             'school_name' => 'required|string|max:255',
-            'email' => 'required|email|max:255',
+            'email' => 'required|email|max:255|unique:school_inquiries,school_email|unique:schools,email',
             'phone' => 'required|string|max:20',
             'domain' => 'required|string|max:100|unique:schools,domain|unique:school_inquiries,proposed_domain|regex:/^[a-z0-9][a-z0-9-]*[a-z0-9]$/i',
             'address' => 'required|string|max:500',
@@ -52,6 +52,7 @@ class SchoolInquiryRequest extends FormRequest
             'school_name.required' => 'School name is required.',
             'email.required' => 'School email is required.',
             'email.email' => 'Please provide a valid email address.',
+            'email.unique' => 'This email address is already registered or has an existing inquiry.',
             'phone.required' => 'Phone number is required.',
             'domain.required' => 'Domain name is required.',
             'domain.unique' => 'This domain name is already taken.',

@@ -241,11 +241,10 @@
 								"value": "application/json",
 								"type": "text"
 							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"name\": \"Test School\",\n    \"domain\": \"testschool.example.com\",\n    \"subscription_plan_id\": 1,\n    \"contact_email\": \"admin@testschool.com\",\n    \"contact_phone\": \"+1234567890\",\n    \"address\": \"123 School Street\",\n    \"city\": \"Test City\",\n    \"state\": \"Test State\",\n    \"country\": \"Test Country\",\n    \"postal_code\": \"12345\",\n    \"admin_first_name\": \"John\",\n    \"admin_last_name\": \"Doe\",\n    \"admin_email\": \"john.doe@testschool.com\",\n    \"admin_phone\": \"+1234567891\"\n}"
-						},
+						],                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"name\": \"Test School\",\n    \"email\": \"school@testschool.com\",\n    \"phone\": \"+1234567890\",\n    \"domain\": \"testschool\",\n    \"subscription_plan_id\": 1,\n    \"contact_email\": \"admin@testschool.com\",\n    \"contact_phone\": \"+1234567890\",\n    \"address\": \"123 School Street\",\n    \"city\": \"Test City\",\n    \"state\": \"Test State\",\n    \"country\": \"Test Country\",\n    \"postal_code\": \"12345\",\n    \"admin_first_name\": \"John\",\n    \"admin_last_name\": \"Doe\",\n    \"admin_email\": \"john.doe@testschool.com\",\n    \"admin_phone\": \"+1234567891\"\n}"
+                        },
 						"url": {
 							"raw": "{{base_url}}/api/v1/schools",
 							"host": [
@@ -990,6 +989,23 @@
 			"item": [
 				{
 					"name": "Create School Inquiry (Public)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    const response = pm.response.json();",
+									"    if (response.success && response.data.id) {",
+									"        pm.environment.set('inquiry_id', response.data.id);",
+									"        console.log('Inquiry created with ID:', response.data.id);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"method": "POST",
 						"header": [
@@ -1006,7 +1022,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"school_name\": \"Test Elementary School\",\n    \"contact_person\": \"Jane Smith\",\n    \"contact_email\": \"jane.smith@testelemschool.edu\",\n    \"contact_phone\": \"+1234567890\",\n    \"school_type\": \"Elementary\",\n    \"student_count\": 250,\n    \"address\": \"789 Education Avenue\",\n    \"city\": \"Learning City\",\n    \"state\": \"Education State\",\n    \"country\": \"Education Country\",\n    \"postal_code\": \"12345\",\n    \"website\": \"https://testelemschool.edu\",\n    \"message\": \"We are interested in implementing your school management system for our elementary school.\"\n}"
+							"raw": "{\n    \"school_name\": \"Test Elementary School {{$timestamp}}\",\n    \"email\": \"admin{{$timestamp}}@testelemschool.edu\",\n    \"phone\": \"+1234567890\",\n    \"domain\": \"testelemschool{{$timestamp}}\",\n    \"address\": \"789 Education Avenue, Learning City, Education State, Education Country - 12345\",\n    \"contact_person\": \"Jane Smith\",\n    \"tagline\": \"Excellence in Elementary Education\",\n    \"principal_name\": \"Dr. Robert Johnson\",\n    \"establishment_year\": 1995,\n    \"student_capacity\": 250,\n    \"school_type\": \"primary\",\n    \"board_affiliation\": \"State Education Board\",\n    \"website\": \"https://testelemschool.edu\"\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/api/v1/inquiries",
@@ -1091,7 +1107,7 @@
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/api/v1/inquiries/1",
+							"raw": "{{base_url}}/api/v1/inquiries/{{inquiry_id}}",
 							"host": [
 								"{{base_url}}"
 							],
@@ -1099,7 +1115,7 @@
 								"api",
 								"v1",
 								"inquiries",
-								"1"
+								"{{inquiry_id}}"
 							]
 						}
 					},
@@ -1128,10 +1144,10 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"status\": \"contacted\",\n    \"notes\": \"Initial contact made. Scheduled demo for next week.\"\n}"
+							"raw": "{\n    \"status\": \"under_review\",\n    \"notes\": \"Initial review completed. Scheduled for detailed evaluation.\"\n}"
 						},
 						"url": {
-							"raw": "{{base_url}}/api/v1/inquiries/1",
+							"raw": "{{base_url}}/api/v1/inquiries/{{inquiry_id}}",
 							"host": [
 								"{{base_url}}"
 							],
@@ -1139,7 +1155,7 @@
 								"api",
 								"v1",
 								"inquiries",
-								"1"
+								"{{inquiry_id}}"
 							]
 						}
 					},
@@ -1168,10 +1184,10 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"domain\": \"approvedschool.example.com\",\n    \"subscription_plan_id\": 2,\n    \"admin_password\": \"SecurePassword123!\"\n}"
+							"raw": "{\n    \"subscription_plan_id\": 2,\n    \"subscription_start_date\": \"2025-06-06\",\n    \"subscription_end_date\": \"2025-12-06\",\n    \"admin_password\": \"SecurePassword123!\"\n}"
 						},
 						"url": {
-							"raw": "{{base_url}}/api/v1/inquiries/1/approve",
+							"raw": "{{base_url}}/api/v1/inquiries/{{inquiry_id}}/approve",
 							"host": [
 								"{{base_url}}"
 							],
@@ -1179,7 +1195,7 @@
 								"api",
 								"v1",
 								"inquiries",
-								"1",
+								"{{inquiry_id}}",
 								"approve"
 							]
 						}
@@ -1273,7 +1289,7 @@
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/api/v1/inquiries/1",
+							"raw": "{{base_url}}/api/v1/inquiries/{{inquiry_id}}",
 							"host": [
 								"{{base_url}}"
 							],
@@ -1281,7 +1297,7 @@
 								"api",
 								"v1",
 								"inquiries",
-								"1"
+								"{{inquiry_id}}"
 							]
 						}
 					},
