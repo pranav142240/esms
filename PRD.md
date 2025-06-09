@@ -37,9 +37,21 @@ Build a comprehensive multi-tenant SaaS application for educational institutions
 ## 2. Architecture Overview
 
 ### 2.1 Database Architecture
-- **Central Database**: Stores superadmin data, subscription plans, school inquiries, registered schools metadata, custom form fields, and billing information
-- **Tenant Databases**: Individual databases per school with isolated data and users
+- **Central Database**: 
+  - Stores superadmin data and authentication
+  - Stores school admin data (Phase 1 - before tenant conversion)
+  - Stores subscription plans and billing information  
+  - Stores school inquiries and registration requests
+  - Stores registered schools metadata and configurations
+  - Stores custom form fields for school registration
+  - Maintains admin-to-tenant conversion tracking and history
+- **Tenant Databases**: 
+  - Individual databases per school with complete data isolation
+  - Contains converted admin data (Phase 2 - post tenant conversion)
+  - Stores all school-specific users (teachers, students, parents, staff)
+  - Contains all academic, financial, and operational school data
 - **Soft Deletes**: All models use soft deletes - no hard deletion of data
+- **Database Isolation**: Complete separation between central admin management and tenant school operations
 
 ### 2.2 API Architecture
 - **RESTful API Design**: All endpoints follow REST conventions
@@ -56,7 +68,9 @@ Build a comprehensive multi-tenant SaaS application for educational institutions
 
 ## 3. User Roles & Authentication
 
-### 3.1 Superadmin (Owner - Central Database)
+### 3.1 User Role Hierarchy
+
+#### 3.1.1 Superadmin (Owner - Central Database)
 - **Role**: System owner who manages the entire SaaS platform
 - **Single User**: One hardcoded/seeded superadmin account
 - **Credentials**:
@@ -66,15 +80,58 @@ Build a comprehensive multi-tenant SaaS application for educational institutions
 - **Access**: Central API only (`superadmin.localhost/api`)
 - **Authentication**: Sanctum token-based (7-day expiration)
 - **Responsibilities**:
-  - Add, approve, and manage schools
-  - Create and manage customized subscription packages
-  - Manage addon bundles to enhance application features
-  - Set subscription expiration dates and monitor renewals
-  - Configure system settings (payment, language, SMTP, about, session manager)
-  - Update account settings and profile management
-  - Monitor payments and financial activities
-  - Manage system-wide configurations and preferences
-  - Add, edit, and remove school admins
+  - Create and manage school admins in central database (Phase 1)
+  - Monitor admin-to-tenant conversion process and track school creation
+  - Create and manage customized subscription packages for schools
+  - Configure system settings (payment, language, SMTP, about)
+  - Monitor system health, performance, and tenant database management
+  - System-level configuration management and multi-tenant coordination
+  - Oversee admin lifecycle from central storage to tenant independence
+
+#### 3.1.2 School Admin (Two-Phase Architecture)
+- **Role**: School owner/administrator who will manage their educational institution
+- **Phase 1 - Central Database Storage**: Initially stored alongside superadmin data in the main database
+- **Phase 2 - Tenant Conversion**: Becomes a tenant with separate database after school creation
+
+**Phase 1: Admin Creation & Storage**
+- **Storage Location**: Central database (same as superadmin)
+- **Data Structure**: Admin profile stored in central `admins` table
+- **Authentication**: Uses central authentication system
+- **Guard**: `admin` guard for central database access
+- **Credentials Management**: Email/password authentication via central system
+- **Profile Data**:
+  - Personal information (name, email, phone)
+  - Authentication credentials (password, tokens)
+  - School assignment metadata
+  - Creation timestamp and status
+- **Access Level**: Limited admin panel access for profile management and school setup initiation
+
+**Phase 2: Tenant Conversion Process**
+1. **School Creation Trigger**: Admin initiates school setup process
+2. **Tenant Database Creation**: System generates dedicated database for the school
+3. **Data Migration**: Admin profile and credentials migrated to tenant database
+4. **Permission Elevation**: Admin becomes school owner with full management capabilities
+5. **Database Isolation**: Complete separation from central database
+6. **Authentication Switch**: Uses tenant-specific authentication system
+
+**Post-Conversion Admin Capabilities**:
+- **Storage**: Dedicated tenant database for complete data isolation
+- **Guard**: `tenant` guard for school-specific authentication
+- **Access**: Full school management system with all features
+- **Database Independence**: Separate database with own schema and data
+- **School Ownership**: Complete control over school operations and users
+- **Subscription Dependency**: All access tied to active school subscription status
+
+**Admin-to-Tenant Workflow**:
+1. Superadmin creates admin account in central database
+2. Admin receives login credentials via email
+3. Admin logs into central system using admin credentials
+4. Admin completes school setup form (name, domain, details)
+5. System creates tenant database with school schema
+6. Admin profile and authentication data migrated to tenant database
+7. Admin automatically logged into new tenant system as school owner
+8. Central admin record marked as "converted" and archived
+9. All future logins use tenant-specific authentication system
 
 ### 3.2 School User Hierarchy (Tenant Database)
 This school management system is designed to manage seven kinds of users with different roles and permissions using Spatie Laravel Permissions package.
@@ -288,6 +345,76 @@ Each admin level is implemented with proper role-based access control through Sp
 - `inactive` - Subscription expired or not yet activated
 - `suspended` - Manually suspended by superadmin action
 - `terminated` - Permanently closed (soft deleted)
+
+#### 5.1.5 Admin Management & Tenant Creation Workflow
+**Purpose**: Comprehensive workflow for managing school administrators from creation to tenant conversion
+
+**Admin Creation Workflow**:
+1. **Admin Profile Creation**:
+   - Superadmin logs into central system (`superadmin.localhost/api`)
+   - Navigates to "Admin Management" section
+   - Creates new admin profile with basic information:
+     - Full name, email address, phone number
+     - Temporary password (must be changed on first login)
+     - Administrative role and permissions
+     - Status (active/pending/suspended)
+   - Admin profile stored in central database `admins` table
+   - System sends welcome email with login credentials
+
+2. **Admin Authentication Setup**:
+   - Admin receives email notification with temporary credentials
+   - Admin logs into central admin portal using provided credentials
+   - Forced password change on first login for security
+   - Profile completion with additional personal information
+   - Access limited to profile management and school setup initiation
+
+3. **School Setup Initiation**:
+   - Admin navigates to "Create School" section in admin portal
+   - Fills comprehensive school information form:
+     - School name, logo, contact information
+     - Domain name selection (unique subdomain requirement)
+     - School address and administrative details
+     - Subscription plan selection (if allowed)
+   - System validates all information and domain availability
+   - Admin submits school creation request
+
+4. **Tenant Database Creation**:
+   - System automatically creates dedicated tenant database
+   - Database naming convention: `tenant_{domain_name}`
+   - Complete school management schema deployment
+   - Default roles and permissions structure setup
+   - Initial configuration data seeding
+
+5. **Admin-to-Tenant Migration**:
+   - Admin profile and authentication data migrated to tenant database
+   - Central admin record marked as "converted" with reference to tenant
+   - Admin becomes school owner with full administrative privileges
+   - System generates tenant-specific authentication tokens
+   - Admin automatically redirected to tenant school portal
+
+6. **Post-Conversion Management**:
+   - Admin operates independently within tenant environment
+   - Complete isolation from central database operations
+   - Full access to school management features based on subscription
+   - Ability to create and manage additional school users
+   - Subscription-dependent feature access and limitations
+
+**Admin Management Features for Superadmin**:
+- View all created admins with status tracking
+- Monitor admin-to-tenant conversion progress
+- Manage admin profiles and permissions before conversion
+- Reset admin passwords and manage authentication issues
+- Track school creation requests and approval workflow
+- Generate reports on admin creation and conversion rates
+- Handle failed conversions and provide admin support
+
+**Admin Status Tracking**:
+- `pending` - Admin created but not yet logged in
+- `active` - Admin logged in and managing profile
+- `setting_up` - Admin in process of creating school
+- `converted` - Successfully converted to tenant (archived in central DB)
+- `suspended` - Admin access temporarily disabled
+- `failed_conversion` - School creation process failed, requires support
 
 ### 5.2 Tenant Features (School APIs)
 
@@ -816,33 +943,282 @@ Route::prefix('api/v1')->middleware(['api', 'tenant.auth'])->group(function () {
 - Secure file upload handling
 - SSL/TLS enforcement
 
+### 7.5 Admin-Tenant Technical Implementation
+**Purpose**: Technical specifications for implementing the admin-tenant two-phase architecture
+
+#### 7.5.1 Database Schema Requirements
+
+**Central Database Tables**:
+```sql
+-- Central database admin storage
+CREATE TABLE admins (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    email_verified_at TIMESTAMP NULL,
+    password VARCHAR(255) NOT NULL,
+    phone VARCHAR(20) NULL,
+    status ENUM('pending', 'active', 'setting_up', 'converted', 'suspended') DEFAULT 'pending',
+    tenant_id BIGINT NULL, -- Reference to tenant after conversion
+    converted_at TIMESTAMP NULL,
+    remember_token VARCHAR(100) NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    deleted_at TIMESTAMP NULL
+);
+
+-- Conversion tracking table
+CREATE TABLE admin_tenant_conversions (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    admin_id BIGINT NOT NULL,
+    tenant_id BIGINT NOT NULL,
+    old_admin_data JSON NOT NULL, -- Backup of original admin data
+    conversion_status ENUM('initiated', 'completed', 'failed') DEFAULT 'initiated',
+    error_message TEXT NULL,
+    converted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (admin_id) REFERENCES admins(id),
+    FOREIGN KEY (tenant_id) REFERENCES tenants(id)
+);
+```
+
+**Tenant Database Schema**:
+```sql
+-- Tenant database contains converted admin as school owner
+CREATE TABLE users (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    role ENUM('admin', 'teacher', 'student', 'parent', 'accountant', 'librarian') DEFAULT 'admin',
+    original_admin_id BIGINT NULL, -- Reference to original central admin
+    is_school_owner BOOLEAN DEFAULT FALSE,
+    -- ... other user fields
+);
+```
+
+#### 7.5.2 Authentication Guards Configuration
+
+**Central Authentication (config/auth.php)**:
+```php
+'guards' => [
+    'superadmin' => [
+        'driver' => 'sanctum',
+        'provider' => 'superadmins',
+    ],
+    'admin' => [
+        'driver' => 'sanctum',
+        'provider' => 'admins',
+    ],
+],
+
+'providers' => [
+    'superadmins' => [
+        'driver' => 'eloquent',
+        'model' => App\Models\SuperAdmin::class,
+    ],
+    'admins' => [
+        'driver' => 'eloquent',
+        'model' => App\Models\Admin::class,
+    ],
+],
+```
+
+**Tenant Authentication**:
+```php
+'guards' => [
+    'tenant' => [
+        'driver' => 'sanctum',
+        'provider' => 'tenant_users',
+    ],
+],
+
+'providers' => [
+    'tenant_users' => [
+        'driver' => 'eloquent',
+        'model' => App\Models\Tenant\User::class,
+    ],
+],
+```
+
+#### 7.5.3 Conversion Service Implementation
+
+**AdminTenantConversionService Requirements**:
+- Handle database connection switching during conversion
+- Migrate admin authentication data securely
+- Create tenant database with proper schema
+- Backup original admin data before conversion
+- Handle rollback in case of conversion failure
+- Generate tenant-specific authentication tokens
+- Update central database with conversion status
+
+**Key Service Methods**:
+```php
+class AdminTenantConversionService
+{
+    public function convertAdminToTenant(Admin $admin, array $schoolData): Tenant
+    public function createTenantDatabase(string $domain): bool
+    public function migrateAdminData(Admin $admin, Tenant $tenant): User
+    public function rollbackConversion(int $conversionId): bool
+    public function validateConversionRequirements(Admin $admin): bool
+}
+```
+
+#### 7.5.4 Middleware and Route Protection
+
+**Central Admin Middleware**:
+- `AdminAuth`: Verify admin authentication in central database
+- `AdminNotConverted`: Ensure admin hasn't been converted to tenant yet
+- `SchoolSetupAccess`: Control access to school setup features
+
+**Tenant Middleware**:
+- `TenantAuth`: Verify tenant user authentication
+- `SchoolOwnerAccess`: Restrict certain features to converted admin (school owner)
+- `SubscriptionValidation`: Ensure school subscription is active
+
+#### 7.5.5 API Endpoint Structure
+
+**Central Admin Endpoints**:
+```
+POST /api/admin/login - Admin authentication
+GET /api/admin/profile - Admin profile management
+POST /api/admin/create-school - Initiate school creation
+GET /api/admin/conversion-status - Check conversion progress
+```
+
+**Tenant Endpoints** (after conversion):
+```
+{schooldomain}.localhost/api/auth/login - Tenant authentication
+{schooldomain}.localhost/api/admin/dashboard - School owner dashboard
+{schooldomain}.localhost/api/users - Manage school users
+```
+
 ---
 
 ## 8. User Workflows
 
-### 8.1 School Registration Flow (API)
-1. Prospective school visits public registration page
-2. Fills out dynamic form (based on superadmin configuration)
-3. Submits inquiry → stored in central database
-4. Superadmin reviews inquiry in admin panel
-5. Superadmin approves → triggers tenant creation
-6. System auto-creates tenant database with default schema
-7. School receives credentials and access to their subdomain
-8. School sets up their portal and users
+### 8.1 Admin Creation and Tenant Conversion Flow
+**Complete workflow from admin creation to independent school management**
 
-### 6.2 Superadmin Daily Workflow
-1. Login to `superadmin.localhost`
-2. Review new school inquiries
-3. Manage form fields configuration
-4. Approve/reject pending applications
-5. Monitor active schools status
-6. Handle support requests
+#### 8.1.1 Superadmin Creates Admin (Phase 1)
+1. **Superadmin Authentication**:
+   - Superadmin logs into central system (`superadmin.localhost/api`)
+   - Accesses admin management dashboard
 
-### 6.3 School User Workflow
-1. Access school-specific subdomain (`schoolname.localhost`)
-2. Login with school credentials
-3. Access role-based dashboard
-4. Perform school-specific tasks
+2. **Admin Profile Creation**:
+   - Navigates to "Create Admin" section
+   - Fills admin creation form:
+     - Full name, email, phone number
+     - Administrative role assignment
+     - Initial status setting
+   - System validates email uniqueness in central database
+   - Admin profile stored in central `admins` table
+
+3. **Credential Distribution**:
+   - System generates temporary secure password
+   - Welcome email sent to admin with login credentials
+   - Admin status set to `pending`
+
+#### 8.1.2 Admin Initial Setup (Phase 1)
+1. **First-time Login**:
+   - Admin receives email with credentials
+   - Logs into central admin portal
+   - Forced to change temporary password
+   - Status updated to `active`
+
+2. **Profile Completion**:
+   - Admin completes personal information
+   - Reviews available features and limitations
+   - Accesses school setup initiation option
+
+#### 8.1.3 School Creation Process (Phase 1 to Phase 2)
+1. **School Setup Initiation**:
+   - Admin clicks "Create My School" button
+   - Status updated to `setting_up`
+   - Access to comprehensive school setup form
+
+2. **School Information Collection**:
+   - School basic information (name, logo, contact)
+   - Domain selection and validation
+   - Administrative details and preferences
+   - Subscription plan selection (if applicable)
+
+3. **System Validation**:
+   - Domain uniqueness verification
+   - Form data validation and sanitization
+   - Subscription plan compatibility check
+
+4. **Tenant Database Creation**:
+   - System creates dedicated tenant database
+   - Database naming: `tenant_{domain_name}`
+   - Complete school schema deployment
+   - Default roles and permissions setup
+
+5. **Admin Migration to Tenant**:
+   - Admin data copied to tenant database
+   - Admin becomes school owner with full privileges
+   - Central admin record updated with conversion details
+   - Status changed to `converted`
+
+6. **Tenant System Activation**:
+   - Admin automatically logged into tenant system
+   - School subdomain becomes active
+   - Full school management capabilities enabled
+   - Welcome dashboard with setup guidance
+
+#### 8.1.4 Post-Conversion School Management (Phase 2)
+1. **Independent School Operations**:
+   - Admin operates as school owner in tenant environment
+   - Complete isolation from central database
+   - Full access to school management features
+   - Ability to create additional school users
+
+2. **School User Management**:
+   - Create and manage teachers, students, parents
+   - Assign roles and permissions within school
+   - Configure school-specific settings and preferences
+
+### 8.2 Superadmin Daily Workflow
+1. **Admin Management**:
+   - Review pending admin creations
+   - Monitor admin-to-tenant conversion progress
+   - Handle failed conversions and provide support
+   - Track admin status across all phases
+
+2. **School Oversight**:
+   - Monitor active school subscriptions
+   - Review school creation requests
+   - Handle school-related support issues
+   - Generate admin and school management reports
+
+3. **System Configuration**:
+   - Manage subscription plans and pricing
+   - Configure form fields for school registration
+   - Update system settings and configurations
+   - Monitor system health and performance
+
+### 8.3 School User Workflow (Post-Conversion)
+1. **Tenant-Specific Access**:
+   - Access school subdomain (`{schoolname}.localhost`)
+   - Login with tenant-specific credentials
+   - Role-based dashboard access
+
+2. **School-Specific Operations**:
+   - Perform role-appropriate tasks
+   - Access subscription-dependent features
+   - Collaborate within isolated school environment
+
+### 8.4 Admin Support and Troubleshooting Workflow
+1. **Conversion Failure Recovery**:
+   - Superadmin identifies failed conversions
+   - Reviews error logs and failure reasons
+   - Initiates manual conversion process or rollback
+   - Communicates with affected admin
+
+2. **Admin Assistance**:
+   - Password reset for admins in Phase 1
+   - Technical support during school setup
+   - Guidance on feature limitations and usage
+   - Escalation to development team if needed
 5. Manage users within school (if admin)
 
 ---
@@ -941,18 +1317,221 @@ Route::prefix('api/v1')->middleware(['api', 'tenant.auth'])->group(function () {
 
 ---
 
-## 8. Future Enhancements
-- Multi-language support
+## 9. Admin-Tenant API Endpoints
+
+### 9.1 Central Database Admin Management APIs
+**Purpose**: API endpoints for managing admins in the central database before tenant conversion
+
+#### 9.1.1 Superadmin Admin Management
+**Base URL**: `superadmin.localhost/api/v1`
+
+```http
+# Admin CRUD Operations
+GET /admins - List all created admins with status
+POST /admins - Create new admin profile
+GET /admins/{id} - Get specific admin details
+PUT /admins/{id} - Update admin profile
+DELETE /admins/{id} - Soft delete admin (before conversion)
+
+# Admin Status Management
+PUT /admins/{id}/status - Update admin status
+GET /admins/pending - List pending admins
+GET /admins/active - List active admins
+GET /admins/setting-up - List admins in school setup process
+
+# Conversion Tracking
+GET /admins/{id}/conversion-status - Check conversion progress
+POST /admins/{id}/force-conversion - Manual conversion trigger
+GET /conversions - List all admin-tenant conversions
+GET /conversions/failed - List failed conversions
+
+# Admin Support
+POST /admins/{id}/reset-password - Reset admin password
+POST /admins/{id}/send-credentials - Resend login credentials
+GET /admins/{id}/activity-log - Admin activity tracking
+```
+
+#### 9.1.2 Admin Authentication & Profile APIs
+**Base URL**: `superadmin.localhost/api/v1/admin`
+
+```http
+# Authentication
+POST /login - Admin login to central system
+POST /logout - Admin logout
+POST /refresh-token - Refresh authentication token
+POST /change-password - Change password (first-time mandatory)
+
+# Profile Management  
+GET /profile - Get admin profile information
+PUT /profile - Update admin profile
+POST /profile/avatar - Upload profile picture
+
+# School Setup Initiation
+GET /school-setup - Get school setup form structure
+POST /school-setup - Submit school creation request
+GET /school-setup/status - Check school setup progress
+```
+
+### 9.2 Tenant Database APIs (Post-Conversion)
+**Purpose**: API endpoints for converted admins managing their schools
+
+#### 9.2.1 School Owner APIs
+**Base URL**: `{schooldomain}.localhost/api/v1`
+
+```http
+# School Owner Dashboard
+GET /admin/dashboard - School owner dashboard data
+GET /admin/statistics - School statistics and analytics
+GET /admin/recent-activities - Recent school activities
+
+# School Configuration
+GET /school/settings - Get school settings
+PUT /school/settings - Update school settings
+POST /school/logo - Update school logo
+GET /school/subscription - Current subscription details
+
+# User Management (School Owner Privileges)
+GET /users - List all school users
+POST /users - Create new school user
+PUT /users/{id} - Update user details
+DELETE /users/{id} - Soft delete user
+POST /users/{id}/reset-password - Reset user password
+
+# Role and Permission Management
+GET /roles - List school roles
+POST /roles - Create custom role
+PUT /roles/{id} - Update role permissions
+GET /permissions - List available permissions
+POST /users/{id}/assign-role - Assign role to user
+```
+
+#### 9.2.2 Subscription and Access Control APIs
+**Base URL**: `{schooldomain}.localhost/api/v1`
+
+```http
+# Subscription Validation
+GET /subscription/status - Check subscription status
+GET /subscription/features - Available features based on plan
+GET /subscription/usage - Current usage statistics
+GET /subscription/limits - Plan limits and restrictions
+
+# Feature Access Control
+GET /features/available - List available features
+GET /menu/permissions - Menu access based on role and subscription
+POST /access/validate - Validate access to specific feature
+```
+
+### 9.3 Cross-Database Reference APIs
+
+#### 9.3.1 Conversion History APIs
+**Base URL**: `superadmin.localhost/api/v1`
+
+```http
+# Conversion Tracking
+GET /conversions/{id} - Get conversion details
+POST /conversions/{id}/rollback - Rollback failed conversion
+GET /conversions/statistics - Conversion statistics
+GET /schools/{id}/original-admin - Get original admin reference
+
+# Audit Trail
+GET /admin-history/{adminId} - Complete admin lifecycle history
+GET /tenant-origins/{tenantId} - Get tenant creation history
+```
+
+#### 9.3.2 Support and Troubleshooting APIs
+**Base URL**: `superadmin.localhost/api/v1`
+
+```http
+# Admin Support
+GET /admins/{id}/support-info - Get admin support information
+POST /admins/{id}/support-note - Add support note
+GET /admins/requiring-support - List admins needing assistance
+
+# System Health
+GET /conversions/health-check - Conversion system health
+GET /tenant-databases/status - All tenant database status
+POST /maintenance/cleanup-failed-conversions - Cleanup failed conversions
+```
+
+### 9.4 Middleware and Authentication Flow
+
+#### 9.4.1 Authentication Middleware Chain
+```http
+# Central Admin Requests
+Request → AdminAuth → AdminNotConverted → RouteHandler
+
+# Tenant Requests  
+Request → TenantAuth → SubscriptionValidation → RouteHandler
+
+# School Owner Specific
+Request → TenantAuth → SchoolOwnerAccess → RouteHandler
+```
+
+#### 9.4.2 Error Response Standards
+```json
+{
+  "success": false,
+  "error": {
+    "code": "ADMIN_ALREADY_CONVERTED",
+    "message": "This admin has already been converted to a tenant",
+    "details": {
+      "admin_id": 123,
+      "tenant_id": 456,
+      "converted_at": "2025-06-10T10:30:00Z"
+    }
+  }
+}
+```
+
+---
+
+## 10. Future Enhancements
+
+### 10.1 Core System Enhancements
+- Multi-language support with localization
 - Advanced reporting and analytics dashboard
-- Mobile application for administrators and users
+- Mobile application for administrators and users  
 - Integration with third-party services (Payment gateways, LMS systems)
 - Subscription and billing management automation
-- Advanced school modules (students, classes, etc.)
-- User invitation system for administrators
 - Real-time notifications via WebSockets
-- Student attendance tracking and reporting
-- Online examination system
-- Parent-teacher communication portal
+- Advanced school modules (students, classes, etc.)
+
+### 10.2 Admin-Tenant System Enhancements
+- **Automated Admin Onboarding**: Self-service admin registration with approval workflow
+- **Bulk Admin Creation**: CSV import for creating multiple admins simultaneously  
+- **Admin Role Templates**: Predefined admin roles with specific permission sets
+- **Conversion Analytics**: Detailed analytics on admin-to-tenant conversion rates and success metrics
+- **Auto-Migration Tools**: Enhanced data migration with validation and rollback capabilities
+- **Multi-Admin Support**: Allow multiple admins per school with hierarchical permissions
+- **Admin Activity Monitoring**: Comprehensive tracking of admin actions across both phases
+
+### 10.3 Advanced Tenant Management
+- **Tenant Resource Monitoring**: Real-time monitoring of tenant database performance and usage
+- **Cross-Tenant Analytics**: Aggregated reporting across all tenant schools for superadmin insights
+- **Tenant Backup and Recovery**: Automated backup system for individual tenant databases
+- **Schema Version Management**: Handle database schema updates across all tenant databases
+- **Tenant Migration Tools**: Tools for moving tenants between different infrastructure
+
+### 10.4 Security and Compliance Enhancements
+- **Two-Factor Authentication**: Enhanced security for admin and superadmin accounts
+- **Audit Trail System**: Complete audit logging for all admin and tenant activities
+- **Data Privacy Controls**: GDPR compliance tools for data management and user rights
+- **Advanced Access Control**: Time-based access restrictions and IP whitelisting
+- **Security Monitoring**: Real-time security threat detection and prevention
+
+### 10.5 User Experience Improvements
+- **Progressive Web App**: PWA capabilities for mobile-friendly admin interfaces
+- **User invitation system**: Email-based invitation system for administrators
+- **Interactive Setup Wizard**: Guided school setup process with progress tracking
+- **Dashboard Customization**: Personalized dashboards for different admin roles
+- **Communication Platform**: Integrated messaging system between superadmin and admins
+
+### 10.6 Integration and API Enhancements
+- **Webhook System**: Event-driven webhooks for admin creation, conversion, and tenant activities
+- **Third-party Integrations**: APIs for connecting with external school management tools
+- **Data Export/Import**: Comprehensive data migration tools for existing school systems
+- **API Rate Limiting**: Advanced rate limiting with tenant-specific quotas
+- **GraphQL Support**: GraphQL endpoints alongside REST APIs for flexible data queries
 
 ---
 
