@@ -22,7 +22,7 @@ $body = @{
     password = "SuperAdmin123!"
 } | ConvertTo-Json
 
-$response = Invoke-RestMethod -Uri "http://localhost:8000/api/v1/auth/login" -Method POST -Body $body -ContentType "application/json" -Headers @{Accept="application/json"}
+$response = Invoke-RestMethod -Uri "http://localhost/esms/public/api/v1/auth/login" -Method POST -Body $body -ContentType "application/json" -Headers @{Accept="application/json"}
 
 $token = $response.data.token
 Write-Host "🔑 Auth Token: $token"
@@ -55,19 +55,19 @@ $schoolData = @{
     admin_phone = "+1234567891"
 } | ConvertTo-Json
 
-$result = Invoke-RestMethod -Uri "http://localhost:8000/api/v1/schools" -Method POST -Body $schoolData -ContentType "application/json" -Headers $headers
+$result = Invoke-RestMethod -Uri "http://localhost/esms/public/api/v1/schools" -Method POST -Body $schoolData -ContentType "application/json" -Headers $headers
 Write-Host "🏫 School Created: $($result.data.name)"
 ```
 
 ### 3. **Get All Schools**
 ```powershell
-$schools = Invoke-RestMethod -Uri "http://localhost:8000/api/v1/schools" -Method GET -Headers @{Accept="application/json"; Authorization="Bearer $token"}
+$schools = Invoke-RestMethod -Uri "http://localhost/esms/public/api/v1/schools" -Method GET -Headers @{Accept="application/json"; Authorization="Bearer $token"}
 Write-Host "📋 Found $($schools.data.data.Count) schools"
 ```
 
 ### 4. **Get Subscription Plans**
 ```powershell
-$plans = Invoke-RestMethod -Uri "http://localhost:8000/api/v1/subscription-plans" -Method GET -Headers @{Accept="application/json"; Authorization="Bearer $token"}
+$plans = Invoke-RestMethod -Uri "http://localhost/esms/public/api/v1/subscription-plans" -Method GET -Headers @{Accept="application/json"; Authorization="Bearer $token"}
 Write-Host "💰 Available Plans: $($plans.data.data.Count)"
 ```
 
@@ -89,7 +89,7 @@ $inquiryData = @{
     message = "We are interested in implementing your school management system."
 } | ConvertTo-Json
 
-$inquiry = Invoke-RestMethod -Uri "http://localhost:8000/api/v1/inquiries" -Method POST -Body $inquiryData -ContentType "application/json" -Headers @{Accept="application/json"}
+$inquiry = Invoke-RestMethod -Uri "http://localhost/esms/public/api/v1/inquiries" -Method POST -Body $inquiryData -ContentType "application/json" -Headers @{Accept="application/json"}
 Write-Host "📝 Inquiry Created: $($inquiry.data.school_name)"
 ```
 
@@ -108,7 +108,7 @@ Write-Host "📝 Inquiry Created: $($inquiry.data.school_name)"
 ### **Environment Variables (Already Correct):**
 - ✅ `superadmin_email`: `superadmin@esms.com`
 - ✅ `superadmin_password`: `SuperAdmin123!`
-- ✅ `base_url`: `http://localhost:8000`
+- ✅ `base_url`: `http://localhost/esms/public`
 
 ---
 
@@ -133,10 +133,10 @@ Write-Host "📝 Inquiry Created: $($inquiry.data.school_name)"
 
 ## 🎯 Testing Order
 
-1. **Start Laravel Server:**
+1. **Ensure XAMPP is Running:**
    ```powershell
-   cd C:\xampp\htdocs\esms
-   php artisan serve
+   # Make sure Apache and MySQL are running in XAMPP Control Panel
+   # The application will be available at: http://localhost/esms/public
    ```
 
 2. **Test Login First** (Get Token)

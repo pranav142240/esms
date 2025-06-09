@@ -3,10 +3,17 @@
 ## Overview
 This Postman collection provides comprehensive API testing for the ESMS (Educational School Management System) Laravel 12 Multi-Tenant SaaS application. The collection includes all superadmin management endpoints with proper authentication, validation, and error handling.
 
+## 🚀 Latest Updates (June 2025)
+- ✅ **XAMPP Compatibility**: Updated all URLs for XAMPP deployment
+- ✅ **Environment Configuration**: Fixed base URL and authentication setup
+- ✅ **PowerShell Examples**: Added Windows-compatible testing commands
+- ✅ **Comprehensive Seeding**: Pre-populated realistic test data
+- ✅ **Token Management**: Automatic token refresh and validation
+
 ## Prerequisites
-- XAMPP/WAMP/LAMP server running
-- Laravel application running on `http://localhost/esms/public`
-- Database properly migrated and seeded
+- XAMPP/WAMP/LAMP server running (XAMPP recommended)
+- Laravel application accessible at `http://localhost/esms/public`
+- Database properly migrated and seeded with comprehensive test data
 - Postman application installed
 
 ## Getting Started
@@ -19,15 +26,27 @@ This Postman collection provides comprehensive API testing for the ESMS (Educati
 
 ### 2. Set Environment
 1. Select "ESMS Local Development" environment from the dropdown
-2. Verify the following variables:
-   - `base_url`: `http://localhost/esms/public`
+2. Verify the following variables are correctly set:
+   - `base_url`: `http://localhost/esms/public` (for XAMPP)
    - `superadmin_email`: `superadmin@esms.com`
    - `superadmin_password`: `SuperAdmin123!`
+   - `auth_token`: (auto-populated after login)
 
 ### 3. Authentication Flow
 1. **Login First**: Run the "Authentication > Login" request
 2. The auth token will be automatically saved to the environment
 3. All subsequent requests will use this token automatically
+4. Token expires in 7 days (604800 seconds)
+
+## 📊 Pre-seeded Test Data
+
+The database comes with comprehensive test data:
+- **1 Superadmin Account**: `superadmin@esms.com` / `SuperAdmin123!`
+- **4 Subscription Plans**: Basic ($19.99), Standard ($49.99), Pro ($99.99), Enterprise ($199.99)
+- **3 Sample Schools**: Greenwood High, Sunrise Elementary, Oakridge Academy
+- **50+ Students**: Across different grades with complete academic records
+- **15+ Teachers**: With subject assignments and contact information
+- **Academic Data**: Grades, library records, financial transactions
 
 ## API Endpoints Overview
 

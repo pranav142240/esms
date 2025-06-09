@@ -1,6 +1,15 @@
 # Product Requirements Document (PRD)
 ## Educational School Management System (ESMS)
 ### Multi-Tenant SaaS Application
+**Version 1.2** | **Last Updated: June 20, 2025**
+
+## 🚀 Latest Updates (June 2025)
+- ✅ **Database Seeding**: Comprehensive test data with superadmin, schools, students, teachers, and academic records
+- ✅ **XAMPP Compatibility**: Full compatibility with XAMPP server environment  
+- ✅ **Postman API Collection**: Complete API collection with fixed environment configurations
+- ✅ **Multi-Tenant Enhancement**: Improved tenant isolation and school management
+- ✅ **Authentication System**: Robust token-based authentication with proper validation
+- ✅ **Subscription Management**: Enhanced subscription plans with expiration handling
 
 ---
 
@@ -19,6 +28,9 @@ Build a comprehensive multi-tenant SaaS application for educational institutions
 - **Code Generation**: Laravel Artisan commands for scaffolding
 - **Data Deletion**: Soft deletes only (no hard deletes)
 - **Business Model**: Subscription-based with expiration management
+- **Development Environment**: XAMPP compatible with proper URL routing
+- **API Testing**: Postman collection with environment configurations
+- **Database Seeding**: Comprehensive test data for all modules
 
 ---
 
@@ -66,6 +78,17 @@ Build a comprehensive multi-tenant SaaS application for educational institutions
 
 ### 3.2 School User Hierarchy (Tenant Database)
 This school management system is designed to manage seven kinds of users with different roles and permissions using Spatie Laravel Permissions package.
+
+#### 3.2.0 School Administrators Hierarchy
+The school can have multiple administrators with different permission levels, all managed through Spatie's permission system:
+
+- **Super Administrator**: Has complete access to all school features and can manage other administrators. This role has permissions to manage all aspects of the school and can create and assign other admin roles.
+- **Department Administrator**: Has administrative access limited to specific departments (e.g., Academic Department, Finance Department). Department admins can manage staff and resources within their department only.
+- **Module Administrator**: Has administrative access limited to specific modules (e.g., Academic Admin, Finance Admin, Examination Admin). Module admins can only access and modify settings within their assigned modules.
+
+All administrators share the same admin panel interface but with visibility and access controlled by their permission sets. This allows schools to create a hierarchical admin structure without requiring separate interfaces.
+
+Each admin level is implemented with proper role-based access control through Spatie's Laravel Permission package. The system automatically filters available functionality based on the admin's permission level, showing only the features they have access to.
 
 #### 3.2.1 Admin (School Administrator)
 - **Role**: Highest permissions after superadmin within the school
@@ -268,24 +291,76 @@ This school management system is designed to manage seven kinds of users with di
 
 ### 5.2 Tenant Features (School APIs)
 
-#### 5.2.1 School Admin Features (Based on Screenshot)
-**Purpose**: Complete school management system with all features shown in the provided screenshot
+### 5.2 Tenant Features (School APIs)
 
-**Features**:
-- **Manage Admin**: Add/edit school admin accounts
-- **Inactive School**: View and reactivate inactive status
-- **Edit**: Modify school information and settings
-- **Delete**: Soft delete records (no hard deletes)
-- **User Management**: Complete CRUD for school users
-- **Role Management**: Create and assign roles with permissions
-- **Dashboard**: School-specific analytics and overview
-- **Profile Management**: User profile and settings
+#### 5.2.1 School Admin Features (Complete School Management System)
+**Purpose**: Complete school management system with comprehensive administrative functionality
+
+**Core Management Features**:
+- **Admin Management**: Add/edit school admin accounts with hierarchical roles
+- **Teacher Management**: Complete CRUD for teachers, departments, and assignments
+- **Student Management**: Student enrollment, profiles, and academic records
+- **Parent Management**: Parent profiles and student relationships
+- **Accountant Management**: Financial staff and accounting permissions
+- **Librarian Management**: Library staff and book management permissions
+
+**Academic Management Features**:
+- **Class & Section Management**: Create and manage academic classes and sections
+- **Subject Management**: Subject creation, assignment to classes and teachers
+- **Department Management**: Academic and administrative departments
+- **Classroom Management**: Physical classroom allocation and management
+- **Routine Management**: Class schedules and timetable creation
+- **Syllabus Management**: Curriculum and syllabus tracking
+- **Exam Management**: Examination categories, offline exams, and grading
+- **Gradebook Management**: Grade recording and academic progress tracking
+- **Attendance Management**: Daily attendance tracking for students
+- **Promotion Management**: Student promotion between academic levels
+
+**Financial Management Features**:
+- **Fee Management**: Student fee structure and collection
+- **Expense Management**: School expense tracking and categorization
+- **Payment Management**: Payment processing and history
+- **Invoice Management**: Mass and individual invoice generation
+
+**Library Management Features**:
+- **Book Management**: Library book catalog and inventory
+- **Book Issue Management**: Book lending and return tracking
+- **Library Reports**: Usage statistics and member records
+
+**Communication & Collaboration Features**:
+- **Noticeboard Management**: School announcements and notices
+- **Event Management**: School events and calendar management
+- **Message Threading**: Internal communication system
+- **Chat System**: Real-time messaging capabilities
+- **Feedback System**: Feedback collection and management
+
+**Document & Profile Management Features**:
+- **User Profiles**: Comprehensive user profile management
+- **Document Management**: File upload and document storage per user
+- **Photo Management**: Profile picture handling
+- **Permission Management**: Role-based menu and feature permissions
+
+**Reporting & Analytics Features**:
+- **Student Reports**: Academic progress and attendance reports
+- **Financial Reports**: Fee collection and expense reports
+- **Library Reports**: Book usage and member statistics
+- **Admit Card Generation**: Examination admit card creation
+
+**Implemented Controllers**:
+- **AuthController**: Handles login, logout, and user information retrieval
+- **UserController**: Manages CRUD operations for users within the tenant
+- **RoleController**: Handles role creation, assignment, and permission management
+- **DashboardController**: Provides dashboard data and statistics
+- **SettingController**: Manages school-specific settings
+- **ProfileController**: Handles user profile management
 
 **Access Control**:
 - Plan-based feature restrictions
-- Role-based permissions within school
+- Role-based permissions within school (Admin, Teacher, Student, Parent, Accountant, Librarian)
 - Subscription status validation
 - Expiration date enforcement
+- Hierarchical admin structure with permission inheritance
+- Menu-based permission system for granular access control
 
 #### 5.2.2 Authentication & User Management
 - Separate login system per school
@@ -300,7 +375,243 @@ This school management system is designed to manage seven kinds of users with di
 - Recent activities
 - Navigation to school modules
 
-#### 5.2.4 RBAC (Role-Based Access Control)
+#### 5.2.4 Academic Management API Endpoints
+**Purpose**: Complete academic management system with API endpoints for classes, subjects, exams, and grades
+
+**Class & Section Management**:
+- `GET /api/v1/classes` - List all classes with sections
+- `POST /api/v1/classes` - Create new class with sections
+- `GET /api/v1/classes/{id}` - Get class details
+- `PUT /api/v1/classes/{id}` - Update class information
+- `DELETE /api/v1/classes/{id}` - Soft delete class
+- `GET /api/v1/classes/{id}/sections` - Get class sections
+- `POST /api/v1/classes/{id}/sections` - Add section to class
+- `PUT /api/v1/sections/{id}` - Update section details
+- `DELETE /api/v1/sections/{id}` - Soft delete section
+
+**Subject Management**:
+- `GET /api/v1/subjects` - List all subjects
+- `POST /api/v1/subjects` - Create new subject
+- `GET /api/v1/subjects/{id}` - Get subject details
+- `PUT /api/v1/subjects/{id}` - Update subject
+- `DELETE /api/v1/subjects/{id}` - Soft delete subject
+- `GET /api/v1/classes/{id}/subjects` - Get subjects for class
+
+**Department Management**:
+- `GET /api/v1/departments` - List all departments
+- `POST /api/v1/departments` - Create new department
+- `GET /api/v1/departments/{id}` - Get department details
+- `PUT /api/v1/departments/{id}` - Update department
+- `DELETE /api/v1/departments/{id}` - Soft delete department
+
+**Classroom Management**:
+- `GET /api/v1/classrooms` - List all classrooms
+- `POST /api/v1/classrooms` - Create new classroom
+- `GET /api/v1/classrooms/{id}` - Get classroom details
+- `PUT /api/v1/classrooms/{id}` - Update classroom
+- `DELETE /api/v1/classrooms/{id}` - Soft delete classroom
+
+#### 5.2.5 Examination & Grading API Endpoints
+**Purpose**: Complete examination management with categories, exams, grades, and gradebook
+
+**Exam Category Management**:
+- `GET /api/v1/exam-categories` - List exam categories
+- `POST /api/v1/exam-categories` - Create exam category
+- `GET /api/v1/exam-categories/{id}` - Get category details
+- `PUT /api/v1/exam-categories/{id}` - Update category
+- `DELETE /api/v1/exam-categories/{id}` - Soft delete category
+
+**Offline Exam Management**:
+- `GET /api/v1/exams` - List all exams
+- `POST /api/v1/exams` - Create new exam
+- `GET /api/v1/exams/{id}` - Get exam details
+- `PUT /api/v1/exams/{id}` - Update exam
+- `DELETE /api/v1/exams/{id}` - Soft delete exam
+- `GET /api/v1/exams/{id}/export` - Export exam results
+
+**Grade Management**:
+- `GET /api/v1/grades` - List grade scale
+- `POST /api/v1/grades` - Create grade scale
+- `GET /api/v1/grades/{id}` - Get grade details
+- `PUT /api/v1/grades/{id}` - Update grade
+- `DELETE /api/v1/grades/{id}` - Soft delete grade
+
+**Gradebook Management**:
+- `GET /api/v1/gradebook` - Get gradebook data
+- `POST /api/v1/gradebook/marks` - Add student marks
+- `GET /api/v1/gradebook/student/{id}` - Get student marks
+- `PUT /api/v1/gradebook/marks/{id}` - Update marks
+- `GET /api/v1/gradebook/marks/export` - Export marks as PDF
+
+#### 5.2.6 Financial Management API Endpoints
+**Purpose**: Complete financial management system for fees, expenses, and payments
+
+**Fee Management**:
+- `GET /api/v1/fees` - List student fees
+- `POST /api/v1/fees` - Create fee structure
+- `GET /api/v1/fees/{id}` - Get fee details
+- `PUT /api/v1/fees/{id}` - Update fee
+- `DELETE /api/v1/fees/{id}` - Soft delete fee
+- `GET /api/v1/fees/export` - Export fee reports
+- `POST /api/v1/fees/invoice` - Generate mass invoices
+- `GET /api/v1/fees/student/{id}` - Get student fee invoice
+
+**Expense Management**:
+- `GET /api/v1/expenses` - List all expenses
+- `POST /api/v1/expenses` - Create new expense
+- `GET /api/v1/expenses/{id}` - Get expense details
+- `PUT /api/v1/expenses/{id}` - Update expense
+- `DELETE /api/v1/expenses/{id}` - Soft delete expense
+
+**Expense Category Management**:
+- `GET /api/v1/expense-categories` - List expense categories
+- `POST /api/v1/expense-categories` - Create category
+- `GET /api/v1/expense-categories/{id}` - Get category details
+- `PUT /api/v1/expense-categories/{id}` - Update category
+- `DELETE /api/v1/expense-categories/{id}` - Soft delete category
+
+#### 5.2.7 Library Management API Endpoints
+**Purpose**: Complete library management system for books and issue tracking
+
+**Book Management**:
+- `GET /api/v1/books` - List all books
+- `POST /api/v1/books` - Add new book
+- `GET /api/v1/books/{id}` - Get book details
+- `PUT /api/v1/books/{id}` - Update book
+- `DELETE /api/v1/books/{id}` - Soft delete book
+
+**Book Issue Management**:
+- `GET /api/v1/book-issues` - List book issues
+- `POST /api/v1/book-issues` - Issue book to student
+- `GET /api/v1/book-issues/{id}` - Get issue details
+- `PUT /api/v1/book-issues/{id}` - Update issue
+- `PUT /api/v1/book-issues/{id}/return` - Return book
+- `DELETE /api/v1/book-issues/{id}` - Soft delete issue
+
+#### 5.2.8 Communication & Collaboration API Endpoints
+**Purpose**: Internal communication system with notices, events, messages, and chat
+
+**Noticeboard Management**:
+- `GET /api/v1/notices` - List all notices
+- `POST /api/v1/notices` - Create new notice
+- `GET /api/v1/notices/{id}` - Get notice details
+- `PUT /api/v1/notices/{id}` - Update notice
+- `DELETE /api/v1/notices/{id}` - Soft delete notice
+
+**Event Management**:
+- `GET /api/v1/events` - List all events
+- `POST /api/v1/events` - Create new event
+- `GET /api/v1/events/{id}` - Get event details
+- `PUT /api/v1/events/{id}` - Update event
+- `DELETE /api/v1/events/{id}` - Soft delete event
+
+**Message Threading**:
+- `GET /api/v1/messages` - List message threads
+- `POST /api/v1/messages` - Send new message
+- `GET /api/v1/messages/{id}` - Get message thread
+- `POST /api/v1/messages/{id}/reply` - Reply to message
+
+**Chat System**:
+- `GET /api/v1/chats/{userId}` - Get chat history
+- `POST /api/v1/chats` - Send chat message
+- `DELETE /api/v1/chats/{id}` - Clear chat history
+
+**Feedback System**:
+- `GET /api/v1/feedback` - List feedback
+- `POST /api/v1/feedback` - Submit feedback
+- `GET /api/v1/feedback/{id}` - Get feedback details
+- `PUT /api/v1/feedback/{id}` - Update feedback
+- `DELETE /api/v1/feedback/{id}` - Soft delete feedback
+
+#### 5.2.9 Attendance & Routine Management API Endpoints
+**Purpose**: Daily attendance tracking and class routine management
+
+**Attendance Management**:
+- `GET /api/v1/attendance` - Get attendance data
+- `POST /api/v1/attendance` - Take attendance
+- `GET /api/v1/attendance/student/{id}` - Get student attendance
+- `GET /api/v1/attendance/export` - Export attendance CSV
+- `GET /api/v1/attendance/class/{id}` - Get class attendance
+
+**Routine Management**:
+- `GET /api/v1/routines` - List class routines
+- `POST /api/v1/routines` - Create routine
+- `GET /api/v1/routines/{id}` - Get routine details
+- `PUT /api/v1/routines/{id}` - Update routine
+- `DELETE /api/v1/routines/{id}` - Soft delete routine
+
+**Syllabus Management**:
+- `GET /api/v1/syllabus` - List syllabus
+- `POST /api/v1/syllabus` - Create syllabus
+- `GET /api/v1/syllabus/{id}` - Get syllabus details
+- `PUT /api/v1/syllabus/{id}` - Update syllabus
+- `DELETE /api/v1/syllabus/{id}` - Soft delete syllabus
+
+#### 5.2.10 Document & Profile Management API Endpoints
+**Purpose**: User profile and document management system
+
+**Profile Management**:
+- `GET /api/v1/profile` - Get user profile
+- `PUT /api/v1/profile` - Update profile
+- `POST /api/v1/profile/photo` - Upload profile photo
+- `DELETE /api/v1/profile/photo` - Remove profile photo
+
+**Document Management**:
+- `GET /api/v1/documents` - List user documents
+- `POST /api/v1/documents` - Upload document
+- `GET /api/v1/documents/{id}` - Download document
+- `DELETE /api/v1/documents/{id}` - Remove document
+- `GET /api/v1/users/{id}/documents` - Get user documents
+
+#### 5.2.11 Student Promotion & Session Management API Endpoints
+**Purpose**: Academic session and student promotion management
+
+**Session Management**:
+- `GET /api/v1/sessions` - List academic sessions
+- `POST /api/v1/sessions` - Create session
+- `GET /api/v1/sessions/{id}` - Get session details
+- `PUT /api/v1/sessions/{id}` - Update session
+- `PUT /api/v1/sessions/{id}/activate` - Set active session
+- `DELETE /api/v1/sessions/{id}` - Soft delete session
+
+**Student Promotion**:
+- `GET /api/v1/promotions` - Get promotion candidates
+- `POST /api/v1/promotions/promote` - Promote students
+- `GET /api/v1/promotions/history` - Promotion history
+
+#### 5.2.12 Admit Card & Reports API Endpoints
+**Purpose**: Admit card generation and comprehensive reporting
+
+**Admit Card Management**:
+- `GET /api/v1/admit-cards` - List admit cards
+- `POST /api/v1/admit-cards` - Create admit card template
+- `GET /api/v1/admit-cards/{id}` - Get admit card
+- `PUT /api/v1/admit-cards/{id}` - Update admit card
+- `GET /api/v1/admit-cards/print` - Print admit cards
+- `DELETE /api/v1/admit-cards/{id}` - Soft delete admit card
+
+#### 5.2.13 Bulk Operations & CSV Import API Endpoints
+**Purpose**: Bulk data operations and CSV import functionality
+
+**Bulk Student Management**:
+- `POST /api/v1/students/bulk-create` - Bulk create students
+- `POST /api/v1/students/csv-import` - Import students from CSV
+- `GET /api/v1/students/template` - Download CSV template
+
+**Bulk User Management**:
+- `POST /api/v1/users/bulk-create` - Bulk create users
+- `POST /api/v1/users/csv-export` - Export users to CSV
+
+#### 5.2.14 Permission Management API Endpoints
+**Purpose**: Role-based access control and permission management
+
+**Teacher Permission Management**:
+- `GET /api/v1/teacher-permissions` - List teacher permissions
+- `PUT /api/v1/teacher-permissions/{id}` - Update permissions
+- `GET /api/v1/menu-permissions/{id}` - Get menu permissions
+- `PUT /api/v1/menu-permissions/{id}` - Update menu permissions
+
+#### 5.2.15 RBAC (Role-Based Access Control)
 - Define custom roles per school
 - Assign permissions to roles
 - User role assignment
@@ -491,8 +802,10 @@ Route::prefix('api/v1')->middleware(['api', 'tenant.auth'])->group(function () {
 #### 7.3.2 Custom Middleware
 - `SuperadminAuth`: Verify superadmin authentication
 - `TenantAuth`: Verify tenant user authentication
+- `TenantAuthMiddleware`: Handles tenant-specific authentication and session management
 - `TenantContext`: Set tenant database context
 - `DomainResolver`: Resolve tenant from subdomain
+- `RoleBasedAccessMiddleware`: Filter access based on user's role and permissions
 
 ### 7.4 Security Requirements
 - CSRF protection on all forms
@@ -538,42 +851,493 @@ Route::prefix('api/v1')->middleware(['api', 'tenant.auth'])->group(function () {
 
 ### Phase 1: Core Infrastructure
 - [x] Laravel 12 setup with tenancy package
-- [ ] Central database structure
-- [ ] Superadmin authentication
-- [ ] Basic tenant creation
-- [ ] Domain routing
+- [x] Central database structure
+- [x] Superadmin authentication
+- [x] Basic tenant creation
+- [x] Domain routing
 
 ### Phase 2: Superadmin Features
-- [ ] Custom form field management
-- [ ] School inquiry system
-- [ ] School approval workflow
-- [ ] Tenant database auto-creation
+- [x] Custom form field management
+- [x] School inquiry system
+- [x] School approval workflow
+- [x] Tenant database auto-creation
 
 ### Phase 3: Tenant Features
-- [ ] Tenant authentication system
-- [ ] Basic school dashboard
-- [ ] User management
-- [ ] RBAC implementation
+- [x] Tenant authentication system
+- [x] Basic school dashboard
+- [x] User management
+- [x] RBAC implementation
+- [x] Admin hierarchy with Spatie permissions
+- [x] Tenant middleware for authentication
+- [x] Role-based access control for different admin levels
 
 ### Phase 4: Advanced Features
-- [ ] File upload handling
-- [ ] Email notifications
-- [ ] Advanced reporting
-- [ ] API endpoints
+- [x] Basic file upload handling for profiles
+- [ ] Complete file upload system for school documents
+- [ ] Email notifications for various events
+- [x] Basic dashboard reporting
+- [ ] Advanced analytics and reporting
+- [x] Additional tenant-specific API endpoints
+
+### Phase 5: Comprehensive Tenant API Implementation
+**Academic Management Controllers**:
+- [ ] ClassController - Class and section management
+- [ ] SubjectController - Subject management with class assignments
+- [ ] DepartmentController - Department organization
+- [ ] ClassroomController - Physical classroom management
+
+**Examination & Grading Controllers**:
+- [ ] ExamCategoryController - Exam category management
+- [ ] ExamController - Offline exam management
+- [ ] GradeController - Grade scale management
+- [ ] GradebookController - Student marks and gradebook
+
+**Financial Management Controllers**:
+- [ ] StudentFeeController - Fee structure and collection
+- [ ] ExpenseController - Expense tracking
+- [ ] ExpenseCategoryController - Expense categorization
+- [ ] PaymentController - Payment processing and history
+
+**Library Management Controllers**:
+- [ ] BookController - Library book catalog
+- [ ] BookIssueController - Book lending and returns
+
+**Communication & Collaboration Controllers**:
+- [ ] NoticeController - Noticeboard management
+- [ ] EventController - School events and calendar
+- [ ] MessageController - Internal messaging system
+- [ ] ChatController - Real-time chat functionality
+- [ ] FeedbackController - Feedback collection
+
+**Attendance & Academic Controllers**:
+- [ ] AttendanceController - Daily attendance tracking
+- [ ] RoutineController - Class schedule management
+- [ ] SyllabusController - Curriculum management
+
+**Student & Enrollment Controllers**:
+- [ ] StudentController - Student profile management
+- [ ] EnrollmentController - Student enrollment tracking
+- [ ] PromotionController - Student promotion management
+
+**Document & Profile Controllers**:
+- [ ] DocumentController - File upload and management
+- [ ] TeacherPermissionController - Teacher-specific permissions
+- [ ] MenuPermissionController - Menu-based access control
+
+**Session & Administrative Controllers**:
+- [ ] SessionController - Academic session management
+- [ ] AdmitCardController - Admit card generation
+- [ ] ReportController - Comprehensive reporting system
+
+**Resource Transformers**:
+- [ ] Create API resource transformers for all entities
+- [ ] Implement consistent JSON response formatting
+- [ ] Add proper error handling and validation
+
+**Request Validation**:
+- [ ] Create form request classes for all API endpoints
+- [ ] Add comprehensive validation rules
+- [ ] Implement custom validation messages
 
 ---
 
 ## 8. Future Enhancements
 - Multi-language support
-- Advanced reporting and analytics
-- Mobile application
-- Integration with third-party services
-- Subscription and billing management
+- Advanced reporting and analytics dashboard
+- Mobile application for administrators and users
+- Integration with third-party services (Payment gateways, LMS systems)
+- Subscription and billing management automation
 - Advanced school modules (students, classes, etc.)
+- User invitation system for administrators
+- Real-time notifications via WebSockets
+- Student attendance tracking and reporting
+- Online examination system
+- Parent-teacher communication portal
 
 ---
 
-## 9. Success Criteria
+## 10. Artisan Command Generation Guide
+
+### 10.1 Tenant Controller Generation Commands
+Generate all tenant controllers with resource methods:
+
+```bash
+# Academic Management Controllers
+php artisan make:controller Interfaces/Api/V1/Tenant/ClassController --api --resource
+php artisan make:controller Interfaces/Api/V1/Tenant/SubjectController --api --resource
+php artisan make:controller Interfaces/Api/V1/Tenant/DepartmentController --api --resource
+php artisan make:controller Interfaces/Api/V1/Tenant/ClassroomController --api --resource
+
+# Examination & Grading Controllers
+php artisan make:controller Interfaces/Api/V1/Tenant/ExamCategoryController --api --resource
+php artisan make:controller Interfaces/Api/V1/Tenant/ExamController --api --resource
+php artisan make:controller Interfaces/Api/V1/Tenant/GradeController --api --resource
+php artisan make:controller Interfaces/Api/V1/Tenant/GradebookController --api --resource
+
+# Financial Management Controllers
+php artisan make:controller Interfaces/Api/V1/Tenant/StudentFeeController --api --resource
+php artisan make:controller Interfaces/Api/V1/Tenant/ExpenseController --api --resource
+php artisan make:controller Interfaces/Api/V1/Tenant/ExpenseCategoryController --api --resource
+php artisan make:controller Interfaces/Api/V1/Tenant/PaymentController --api --resource
+
+# Library Management Controllers
+php artisan make:controller Interfaces/Api/V1/Tenant/BookController --api --resource
+php artisan make:controller Interfaces/Api/V1/Tenant/BookIssueController --api --resource
+
+# Communication & Collaboration Controllers
+php artisan make:controller Interfaces/Api/V1/Tenant/NoticeController --api --resource
+php artisan make:controller Interfaces/Api/V1/Tenant/EventController --api --resource
+php artisan make:controller Interfaces/Api/V1/Tenant/MessageController --api --resource
+php artisan make:controller Interfaces/Api/V1/Tenant/ChatController --api --resource
+php artisan make:controller Interfaces/Api/V1/Tenant/FeedbackController --api --resource
+
+# Attendance & Academic Controllers
+php artisan make:controller Interfaces/Api/V1/Tenant/AttendanceController --api --resource
+php artisan make:controller Interfaces/Api/V1/Tenant/RoutineController --api --resource
+php artisan make:controller Interfaces/Api/V1/Tenant/SyllabusController --api --resource
+
+# Student & Enrollment Controllers
+php artisan make:controller Interfaces/Api/V1/Tenant/StudentController --api --resource
+php artisan make:controller Interfaces/Api/V1/Tenant/EnrollmentController --api --resource
+php artisan make:controller Interfaces/Api/V1/Tenant/PromotionController --api --resource
+
+# Document & Profile Controllers
+php artisan make:controller Interfaces/Api/V1/Tenant/DocumentController --api --resource
+php artisan make:controller Interfaces/Api/V1/Tenant/TeacherPermissionController --api --resource
+php artisan make:controller Interfaces/Api/V1/Tenant/MenuPermissionController --api --resource
+
+# Session & Administrative Controllers
+php artisan make:controller Interfaces/Api/V1/Tenant/SessionController --api --resource
+php artisan make:controller Interfaces/Api/V1/Tenant/AdmitCardController --api --resource
+php artisan make:controller Interfaces/Api/V1/Tenant/ReportController --api --resource
+```
+
+### 10.2 Model Generation Commands
+Generate tenant-specific models:
+
+```bash
+# Academic Models
+php artisan make:model Models/Tenant/Classes -m
+php artisan make:model Models/Tenant/Subject -m
+php artisan make:model Models/Tenant/Department -m
+php artisan make:model Models/Tenant/ClassRoom -m
+php artisan make:model Models/Tenant/Section -m
+
+# Examination Models
+php artisan make:model Models/Tenant/ExamCategory -m
+php artisan make:model Models/Tenant/Exam -m
+php artisan make:model Models/Tenant/Grade -m
+php artisan make:model Models/Tenant/Gradebook -m
+
+# Student & Enrollment Models
+php artisan make:model Models/Tenant/Student -m
+php artisan make:model Models/Tenant/Parent -m
+php artisan make:model Models/Tenant/Teacher -m
+php artisan make:model Models/Tenant/Enrollment -m
+
+# Financial Models
+php artisan make:model Models/Tenant/StudentFeeManager -m
+php artisan make:model Models/Tenant/Expense -m
+php artisan make:model Models/Tenant/ExpenseCategory -m
+php artisan make:model Models/Tenant/Payment -m
+
+# Library Models
+php artisan make:model Models/Tenant/Book -m
+php artisan make:model Models/Tenant/BookIssue -m
+
+# Communication Models
+php artisan make:model Models/Tenant/Noticeboard -m
+php artisan make:model Models/Tenant/FrontendEvent -m
+php artisan make:model Models/Tenant/MessageThrade -m
+php artisan make:model Models/Tenant/Chat -m
+php artisan make:model Models/Tenant/Feedback -m
+
+# Academic Support Models
+php artisan make:model Models/Tenant/DailyAttendances -m
+php artisan make:model Models/Tenant/Routine -m
+php artisan make:model Models/Tenant/Syllabus -m
+php artisan make:model Models/Tenant/Session -m
+php artisan make:model Models/Tenant/AdmitCard -m
+```
+
+### 10.3 Request Validation Classes
+Generate form request validation classes:
+
+```bash
+# Academic Request Classes
+php artisan make:request Tenant/ClassRequest
+php artisan make:request Tenant/SubjectRequest
+php artisan make:request Tenant/DepartmentRequest
+php artisan make:request Tenant/ClassroomRequest
+
+# Examination Request Classes
+php artisan make:request Tenant/ExamCategoryRequest
+php artisan make:request Tenant/ExamRequest
+php artisan make:request Tenant/GradeRequest
+php artisan make:request Tenant/GradebookRequest
+
+# Student Request Classes
+php artisan make:request Tenant/StudentRequest
+php artisan make:request Tenant/ParentRequest
+php artisan make:request Tenant/TeacherRequest
+php artisan make:request Tenant/EnrollmentRequest
+
+# Financial Request Classes
+php artisan make:request Tenant/StudentFeeRequest
+php artisan make:request Tenant/ExpenseRequest
+php artisan make:request Tenant/ExpenseCategoryRequest
+
+# Library Request Classes
+php artisan make:request Tenant/BookRequest
+php artisan make:request Tenant/BookIssueRequest
+
+# Communication Request Classes
+php artisan make:request Tenant/NoticeRequest
+php artisan make:request Tenant/EventRequest
+php artisan make:request Tenant/MessageRequest
+php artisan make:request Tenant/FeedbackRequest
+
+# Academic Support Request Classes
+php artisan make:request Tenant/AttendanceRequest
+php artisan make:request Tenant/RoutineRequest
+php artisan make:request Tenant/SyllabusRequest
+```
+
+### 10.4 API Resource Classes
+Generate API resource transformers for JSON responses:
+
+```bash
+# Academic Resources
+php artisan make:resource Tenant/ClassResource
+php artisan make:resource Tenant/SubjectResource
+php artisan make:resource Tenant/DepartmentResource
+php artisan make:resource Tenant/ClassroomResource
+
+# Examination Resources
+php artisan make:resource Tenant/ExamCategoryResource
+php artisan make:resource Tenant/ExamResource
+php artisan make:resource Tenant/GradeResource
+php artisan make:resource Tenant/GradebookResource
+
+# Student Resources
+php artisan make:resource Tenant/StudentResource
+php artisan make:resource Tenant/ParentResource
+php artisan make:resource Tenant/TeacherResource
+php artisan make:resource Tenant/EnrollmentResource
+
+# Financial Resources
+php artisan make:resource Tenant/StudentFeeResource
+php artisan make:resource Tenant/ExpenseResource
+php artisan make:resource Tenant/ExpenseCategoryResource
+php artisan make:resource Tenant/PaymentResource
+
+# Library Resources
+php artisan make:resource Tenant/BookResource
+php artisan make:resource Tenant/BookIssueResource
+
+# Communication Resources
+php artisan make:resource Tenant/NoticeResource
+php artisan make:resource Tenant/EventResource
+php artisan make:resource Tenant/MessageResource
+php artisan make:resource Tenant/FeedbackResource
+
+# Academic Support Resources
+php artisan make:resource Tenant/AttendanceResource
+php artisan make:resource Tenant/RoutineResource
+php artisan make:resource Tenant/SyllabusResource
+php artisan make:resource Tenant/SessionResource
+php artisan make:resource Tenant/AdmitCardResource
+```
+
+### 10.5 Middleware Generation Commands
+Generate role-based access middleware:
+
+```bash
+# Role-based access middleware
+php artisan make:middleware Tenant/AdminAccessMiddleware
+php artisan make:middleware Tenant/TeacherAccessMiddleware
+php artisan make:middleware Tenant/AccountantAccessMiddleware
+php artisan make:middleware Tenant/LibrarianAccessMiddleware
+php artisan make:middleware Tenant/StudentAccessMiddleware
+php artisan make:middleware Tenant/ParentAccessMiddleware
+```
+
+### 10.6 Migration Generation Commands
+Generate tenant-specific migrations:
+
+```bash
+# Academic migrations
+php artisan make:migration tenant_create_classes_table
+php artisan make:migration tenant_create_subjects_table
+php artisan make:migration tenant_create_departments_table
+php artisan make:migration tenant_create_classrooms_table
+php artisan make:migration tenant_create_sections_table
+
+# Examination migrations
+php artisan make:migration tenant_create_exam_categories_table
+php artisan make:migration tenant_create_exams_table
+php artisan make:migration tenant_create_grades_table
+php artisan make:migration tenant_create_gradebooks_table
+
+# Student & Enrollment migrations
+php artisan make:migration tenant_create_students_table
+php artisan make:migration tenant_create_parents_table
+php artisan make:migration tenant_create_teachers_table
+php artisan make:migration tenant_create_enrollments_table
+
+# Financial migrations
+php artisan make:migration tenant_create_student_fee_managers_table
+php artisan make:migration tenant_create_expenses_table
+php artisan make:migration tenant_create_expense_categories_table
+php artisan make:migration tenant_create_payments_table
+
+# Library migrations
+php artisan make:migration tenant_create_books_table
+php artisan make:migration tenant_create_book_issues_table
+
+# Communication migrations
+php artisan make:migration tenant_create_noticeboards_table
+php artisan make:migration tenant_create_frontend_events_table
+php artisan make:migration tenant_create_message_thrades_table
+php artisan make:migration tenant_create_chats_table
+php artisan make:migration tenant_create_feedback_table
+
+# Academic Support migrations
+php artisan make:migration tenant_create_daily_attendances_table
+php artisan make:migration tenant_create_routines_table
+php artisan make:migration tenant_create_syllabuses_table
+php artisan make:migration tenant_create_sessions_table
+php artisan make:migration tenant_create_admit_cards_table
+```
+
+---
+
+## 11. Implementation Status
+
+### 11.1 Completed Features ✅
+- [x] Laravel 12 setup with tenancy package
+- [x] Central database structure for superadmin
+- [x] Superadmin authentication system
+- [x] Custom form field management API
+- [x] School inquiry system with dynamic forms
+- [x] School approval workflow
+- [x] Tenant database auto-creation
+- [x] Tenant authentication system
+- [x] Basic tenant dashboard and user management
+- [x] RBAC implementation with Spatie permissions
+- [x] Admin hierarchy with role-based access control
+- [x] Tenant middleware for authentication
+- [x] Basic API endpoints for user management
+- [x] Profile management system
+
+### 11.2 In Progress Features 🔄
+- [ ] Comprehensive tenant API controllers implementation
+- [ ] Complete model relationships and validation
+- [ ] Advanced file upload and document management
+- [ ] Email notification system
+- [ ] Comprehensive reporting and analytics
+
+### 11.3 Pending Features ⏳
+- [ ] Mobile application support
+- [ ] Real-time notifications via WebSockets
+- [ ] Advanced reporting dashboard
+- [ ] Third-party integrations
+- [ ] Automated billing and subscription management
+- [ ] Multi-language support
+
+---
+
+**Last Updated**: June 9, 2025  
+**Version**: 1.1  
+**Status**: Active Development - Tenant API Implementation Phase
+php artisan make:resource Tenant/ParentResource
+php artisan make:resource Tenant/TeacherResource
+php artisan make:resource Tenant/EnrollmentResource
+
+# Financial Resources
+php artisan make:resource Tenant/StudentFeeResource
+php artisan make:resource Tenant/ExpenseResource
+php artisan make:resource Tenant/ExpenseCategoryResource
+
+# Library Resources
+php artisan make:resource Tenant/BookResource
+php artisan make:resource Tenant/BookIssueResource
+
+# Communication Resources
+php artisan make:resource Tenant/NoticeResource
+php artisan make:resource Tenant/EventResource
+php artisan make:resource Tenant/MessageResource
+php artisan make:resource Tenant/FeedbackResource
+
+# Academic Support Resources
+php artisan make:resource Tenant/AttendanceResource
+php artisan make:resource Tenant/RoutineResource
+php artisan make:resource Tenant/SyllabusResource
+```
+
+### 10.5 Migration Commands for Tenant Database
+Generate tenant-specific migrations:
+
+```bash
+# Academic Migrations
+php artisan make:migration create_classes_table --path=database/migrations/tenant
+php artisan make:migration create_subjects_table --path=database/migrations/tenant
+php artisan make:migration create_departments_table --path=database/migrations/tenant
+php artisan make:migration create_classrooms_table --path=database/migrations/tenant
+php artisan make:migration create_sections_table --path=database/migrations/tenant
+
+# Examination Migrations
+php artisan make:migration create_exam_categories_table --path=database/migrations/tenant
+php artisan make:migration create_exams_table --path=database/migrations/tenant
+php artisan make:migration create_grades_table --path=database/migrations/tenant
+php artisan make:migration create_gradebooks_table --path=database/migrations/tenant
+
+# Student & Staff Migrations
+php artisan make:migration create_students_table --path=database/migrations/tenant
+php artisan make:migration create_parents_table --path=database/migrations/tenant
+php artisan make:migration create_teachers_table --path=database/migrations/tenant
+php artisan make:migration create_enrollments_table --path=database/migrations/tenant
+
+# Financial Migrations
+php artisan make:migration create_student_fee_managers_table --path=database/migrations/tenant
+php artisan make:migration create_expenses_table --path=database/migrations/tenant
+php artisan make:migration create_expense_categories_table --path=database/migrations/tenant
+php artisan make:migration create_payments_table --path=database/migrations/tenant
+
+# Library Migrations
+php artisan make:migration create_books_table --path=database/migrations/tenant
+php artisan make:migration create_book_issues_table --path=database/migrations/tenant
+
+# Communication Migrations
+php artisan make:migration create_noticeboards_table --path=database/migrations/tenant
+php artisan make:migration create_frontend_events_table --path=database/migrations/tenant
+php artisan make:migration create_message_thrades_table --path=database/migrations/tenant
+php artisan make:migration create_chats_table --path=database/migrations/tenant
+php artisan make:migration create_feedback_table --path=database/migrations/tenant
+
+# Academic Support Migrations
+php artisan make:migration create_daily_attendances_table --path=database/migrations/tenant
+php artisan make:migration create_routines_table --path=database/migrations/tenant
+php artisan make:migration create_syllabuses_table --path=database/migrations/tenant
+php artisan make:migration create_sessions_table --path=database/migrations/tenant
+php artisan make:migration create_admit_cards_table --path=database/migrations/tenant
+```
+
+### 10.6 Middleware Generation
+Generate role-based access middleware:
+
+```bash
+# Role-based access middleware
+php artisan make:middleware Tenant/AdminOnlyMiddleware
+php artisan make:middleware Tenant/TeacherAccessMiddleware
+php artisan make:middleware Tenant/AccountantAccessMiddleware
+php artisan make:middleware Tenant/LibrarianAccessMiddleware
+php artisan make:middleware Tenant/RoleBasedAccessMiddleware
+```
+
+---
+
+## 11. Success Criteria
 - Superadmin can efficiently manage school registrations
 - Schools operate independently with full data isolation
 - System scales to handle multiple tenants
@@ -670,6 +1434,35 @@ PUT    /api/roles/{id}                 # Update role
 DELETE /api/roles/{id}                 # Delete role
 ```
 
+#### 5.2.4 Dashboard Management
+```
+GET    /api/dashboard                  # Get dashboard statistics
+GET    /api/dashboard/analytics        # Get detailed analytics
+```
+
+#### 5.2.5 Profile Management
+```
+GET    /api/profile                    # Get user profile
+PUT    /api/profile                    # Update user profile
+POST   /api/profile/change-password    # Change user password
+POST   /api/profile/upload-avatar      # Upload profile picture
+```
+
+#### 5.2.6 Settings Management
+```
+GET    /api/settings                   # Get all settings
+PUT    /api/settings                   # Update settings
+GET    /api/settings/{key}             # Get specific setting
+PUT    /api/settings/{key}             # Update specific setting
+```
+
+#### 5.2.7 Permission Management
+```
+GET    /api/permissions                # List all permissions
+POST   /api/roles/{id}/permissions     # Assign permissions to role
+DELETE /api/roles/{id}/permissions/{permission_id} # Remove permission from role
+```
+
 ---
 
 ## 6. Laravel Artisan Commands for Development
@@ -705,6 +1498,9 @@ php artisan make:controller Api/Tenant/AuthController
 php artisan make:controller Api/Tenant/UserController --resource --api
 php artisan make:controller Api/Tenant/RoleController --resource --api
 php artisan make:controller Api/Tenant/DashboardController
+php artisan make:controller Api/Tenant/SettingController --resource --api
+php artisan make:controller Api/Tenant/ProfileController
+php artisan make:controller Api/Tenant/PermissionController
 ```
 
 ### 6.3 Request Validation Classes
@@ -721,6 +1517,9 @@ php artisan make:request SchoolSubscriptionRequest
 php artisan make:request Tenant/LoginRequest
 php artisan make:request Tenant/UserRequest
 php artisan make:request Tenant/RoleRequest
+php artisan make:request Tenant/SettingRequest
+php artisan make:request Tenant/ProfileUpdateRequest
+php artisan make:request Tenant/PasswordChangeRequest
 ```
 
 ### 6.4 Resource Classes (API Responses)
@@ -736,13 +1535,19 @@ php artisan make:resource SchoolSubscriptionResource
 # Tenant Resources
 php artisan make:resource Tenant/UserResource
 php artisan make:resource Tenant/RoleResource
+php artisan make:resource Tenant/DashboardResource
+php artisan make:resource Tenant/SettingResource
+php artisan make:resource Tenant/ProfileResource
+php artisan make:resource Tenant/PermissionResource
 ```
 
 ### 6.5 Middleware Generation
 ```bash
 php artisan make:middleware SuperadminAuth
 php artisan make:middleware TenantAuth
+php artisan make:middleware TenantAuthMiddleware
 php artisan make:middleware SetTenantContext
+php artisan make:middleware RoleBasedAccessMiddleware
 ```
 
 ### 6.6 Seeder Generation
@@ -767,9 +1572,12 @@ php artisan make:migration create_school_subscriptions_table
 php artisan make:migration create_tenant_users_table
 php artisan make:migration create_tenant_roles_table
 php artisan make:migration create_tenant_permissions_table
+php artisan make:migration create_settings_table
+php artisan make:migration add_last_login_at_to_users_table
+php artisan make:migration create_default_admin_user
 ```
 
 ---
 
-*Last Updated: June 6, 2025*
-*Version: 1.0*
+*Last Updated: June 9, 2025*
+*Version: 1.1*

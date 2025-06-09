@@ -1,16 +1,55 @@
 # ESMS - SaaS School Management System
 
-A multi-tenant SaaS school management system built with Laravel, using Domain-Driven Design principles.
+A comprehensive multi-tenant SaaS school management system built with Laravel 12, featuring Domain-Driven Design principles and robust subscription management.
+
+## 🚀 Latest Updates (June 2025)
+- ✅ **XAMPP Compatibility**: Full production-ready deployment
+- ✅ **Comprehensive Database Seeding**: Realistic test data for all modules
+- ✅ **Enhanced Multi-Tenancy**: Improved school isolation and management
+- ✅ **Postman API Collection**: Complete testing environment setup
+- ✅ **Subscription Management**: Advanced billing and plan handling
+
+## 📋 Quick Start
+
+### For XAMPP Users (Recommended)
+```powershell
+# Clone the repository
+git clone https://github.com/pranav142240/esms.git c:\xampp\htdocs\esms
+
+# Navigate to the project directory
+cd c:\xampp\htdocs\esms
+
+# Install PHP dependencies
+composer install
+
+# Copy environment file and generate application key
+cp .env.example .env
+php artisan key:generate
+
+# Run fresh migrations with comprehensive seeding
+php artisan migrate:fresh
+php artisan db:seed
+
+# Start XAMPP Apache and MySQL
+# Access at: http://localhost/esms/public
+```
+
+### For Laravel Development Server
+```powershell
+# After the above setup steps
+php artisan serve --host=localhost --port=8000
+# Access at: http://localhost:8000
+```
 
 ## Git Setup Instructions
 
-This project is set up with Git for version control, allowing you to work on it from anywhere.
+This project uses Git for version control with comprehensive documentation and API testing.
 
 ### Cloning the Repository
 
 To work on this project from a new system:
 
-```bash
+```powershell
 # Clone the repository
 git clone https://github.com/pranav142240/esms.git
 
@@ -24,13 +63,31 @@ composer install
 cp .env.example .env
 php artisan key:generate
 
-# Run migrations
-php artisan migrate
+# Setup database with comprehensive seeding
+php artisan migrate:fresh
+php artisan db:seed
 
-# If you're using npm for frontend assets
+# For frontend assets (if needed)
 npm install
 npm run dev
 ```
+
+## 🔑 Default Credentials
+
+After seeding, use these credentials to access the system:
+
+- **Superadmin Email**: `superadmin@esms.com`
+- **Superadmin Password**: `SuperAdmin123!`
+
+## 📊 Seeded Test Data
+
+The database seeder provides:
+- 4 Subscription plans with different pricing tiers
+- 3 Sample schools with complete tenant setup
+- 50+ Students with academic records
+- 15+ Teachers with subject assignments
+- Library records and financial data
+- School inquiries and form configurations
 
 ### Working with Branches
 

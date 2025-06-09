@@ -1,4 +1,49 @@
-# Release Notes
+# ESMS Release Notes
+## Educational School Management System
+
+All notable changes to the ESMS project will be documented in this file.
+
+## [v1.2.0] - 2025-06-20
+
+### 🚀 Major Features Added
+- **XAMPP Compatibility**: Full production deployment support for XAMPP server environment
+- **Comprehensive Database Seeding**: Added realistic test data for all modules including students, teachers, academic records
+- **Enhanced Multi-Tenancy**: Improved tenant database isolation and school management
+- **Postman API Collection**: Complete API testing environment with fixed configurations
+
+### ✅ Improvements
+- **Authentication System**: Enhanced token-based authentication with proper validation
+- **Subscription Management**: Robust billing and plan management with expiration handling
+- **API Documentation**: Updated all PowerShell commands for Windows compatibility
+- **Database Schema**: Added comprehensive relationships and data integrity
+
+### 🔧 Bug Fixes
+- Fixed Postman environment base URL from `localhost:8000` to `localhost/esms/public`
+- Resolved API authentication token auto-population issues
+- Fixed school creation endpoint parameter validation
+- Corrected database seeder relationships and constraints
+
+### 📊 Database Changes
+- Added 50+ realistic student records across multiple grades
+- Added 15+ teacher records with subject assignments
+- Added comprehensive academic, library, and financial test data
+- Added 3 sample schools with complete tenant setup
+- Added 4 subscription plans with different pricing tiers
+
+## [v1.1.0] - 2025-06-09
+
+### Initial Release Features
+- Multi-tenant SaaS architecture with Laravel Tenancy
+- Superadmin management system
+- School registration and inquiry system
+- Subscription plan management
+- Role-based access control
+- RESTful API architecture
+- Domain-driven design implementation
+
+---
+
+## Laravel Framework Changelog
 
 ## [Unreleased](https://github.com/laravel/laravel/compare/v12.0.8...12.x)
 

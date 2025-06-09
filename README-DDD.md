@@ -1,53 +1,58 @@
 # Domain-Driven Design with Multi-tenancy in Laravel
+## ESMS - Educational School Management System
 
-This document outlines how to implement Domain-Driven Design (DDD) principles in a multi-tenant Laravel application.
+**Updated: June 2025** - Reflecting latest multi-tenant architecture improvements
+
+This document outlines how we implement Domain-Driven Design (DDD) principles in the ESMS multi-tenant Laravel application, with enhanced tenant isolation and subscription management.
+
+## 🏗️ Latest Architecture Enhancements
+- ✅ **Enhanced Multi-Tenancy**: Improved tenant database isolation
+- ✅ **Domain Separation**: Clear bounded contexts for different business areas
+- ✅ **Subscription Management**: Robust billing and plan management domain
+- ✅ **XAMPP Compatibility**: Production-ready deployment configurations
+- ✅ **Comprehensive Seeding**: Domain-specific test data generation
 
 ## Directory Structure
 
-Following DDD principles, here's a recommended directory structure for your application:
+Following DDD principles, here's our implemented directory structure for the ESMS application:
 
 ```
 app/
 ├── Domain/                       # Core domain logic organized by bounded contexts
-│   ├── Billing/                  # Bounded context for billing
+│   ├── Superadmin/              # Superadmin bounded context (implemented)
+│   │   ├── Models/              # Domain models for superadmin
+│   │   ├── Services/            # Business logic services
+│   │   ├── Repositories/        # Data access contracts
+│   │   └── Events/              # Domain events
+│   ├── User/                    # User management bounded context (implemented)
 │   │   ├── Models/
 │   │   ├── Services/
-│   │   ├── Repositories/
-│   │   ├── Events/
-│   │   └── ValueObjects/
-│   ├── Identity/                 # Bounded context for user management
-│   │   ├── Models/
-│   │   ├── Services/
-│   │   ├── Repositories/
-│   │   └── Events/
-│   ├── Inventory/                # Another bounded context
-│   │   └── ...
-│   └── Shared/                   # Shared domain logic between contexts
-│       ├── ValueObjects/
-│       └── Events/
-├── Application/                  # Application services that orchestrate domain logic
-│   ├── Commands/                 # Command handlers
-│   ├── Queries/                  # Query handlers
-│   ├── DTOs/                     # Data Transfer Objects
-│   └── Services/                 # Application services
-├── Infrastructure/               # Infrastructure concerns
-│   ├── Persistence/              # Database-related code
-│   │   ├── Eloquent/             # Eloquent models and repositories
-│   │   └── QueryBuilders/        # Custom query builders
-│   ├── ExternalServices/         # Third-party service integrations
-│   └── Tenancy/                  # Tenancy-specific infrastructure
-├── Interfaces/                   # User interfaces
-│   ├── Api/                      # API controllers and resources
-│   │   ├── Controllers/
-│   │   └── Resources/
-│   └── Web/                      # Web controllers and views
-│       ├── Controllers/
-│       └── ViewModels/
+│   │   └── Repositories/
+│   ├── Billing/                 # Subscription and billing context (implemented)
+│   │   ├── Models/              # SubscriptionPlan, School billing
+│   │   ├── Services/            # Payment processing, plan management
+│   │   └── Repositories/
+│   ├── School/                  # School management context (implemented)
+│   │   ├── Models/              # School, SchoolInquiry
+│   │   ├── Services/            # School creation, tenant setup
+│   │   └── Repositories/
+│   └── Shared/                  # Shared domain logic between contexts
+│       ├── ValueObjects/        # Common value objects
+│       └── Events/              # Shared domain events
+├── Application/                 # Application services (implemented)
+│   └── Services/                # Application-level orchestration
+├── Infrastructure/              # Infrastructure concerns (implemented)
+│   └── Persistence/             # Database-related implementations
+│       └── Eloquent/            # Eloquent models and repositories
+├── Interfaces/                  # User interfaces (partially implemented)
+│   └── Api/                     # API controllers and resources
+│       ├── Controllers/         # RESTful API controllers
+│       └── Resources/           # API response transformers
 ```
 
-## Implementation Steps
+## Current Implementation Status
 
-### 1. Set up Bounded Contexts
+### ✅ Implemented Bounded Contexts
 
 Identify the core subdomains and bounded contexts of your application and organize your code accordingly. Each bounded context should have its own set of models, services, repositories, and events.
 
