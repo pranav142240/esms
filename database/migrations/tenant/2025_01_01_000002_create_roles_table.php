@@ -11,15 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('tenants', function (Blueprint $table) {
-            $table->id();
+        Schema::create('roles', function (Blueprint $table) {
+            $table->bigIncrements('id');
             $table->string('name');
-            $table->string('domain')->unique();
-            $table->string('database')->unique();
-            $table->foreignId('admin_id')->constrained('users');
-            $table->string('status')->default('active'); // active, suspended, inactive
-            $table->json('settings')->nullable();
+            $table->string('guard_name');
+            $table->string('description')->nullable();
             $table->timestamps();
+
+            $table->unique(['name', 'guard_name']);
         });
     }
 
@@ -28,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('tenants');
+        Schema::dropIfExists('roles');
     }
 };

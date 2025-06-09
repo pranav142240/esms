@@ -1,0 +1,797 @@
+{
+	"info": {
+		"_postman_id": "admin-collection-2025",
+		"name": "ESMS Admin Management APIs",
+		"description": "Admin Management API collection for ESMS - Two-Phase Admin System (Central Database → Tenant Conversion)",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "admin-apis"
+	},
+	"item": [
+		{
+			"name": "Superadmin - Admin Management",
+			"description": "APIs for superadmin to manage admins in central database",
+			"item": [
+				{
+					"name": "Get All Admins",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{superadmin_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/admins?status=&search=&per_page=15",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "admins"],
+							"query": [
+								{
+									"key": "status",
+									"value": "",
+									"description": "Filter by status: pending, active, setting_up, converted, suspended"
+								},
+								{
+									"key": "search",
+									"value": "",
+									"description": "Search by name or email"
+								},
+								{
+									"key": "per_page",
+									"value": "15",
+									"description": "Number of items per page"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Admin",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{superadmin_token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"John Smith\",\n    \"email\": \"admin@example.com\",\n    \"phone\": \"+1234567890\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/admins",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "admins"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Admin by ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{superadmin_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/admins/{{admin_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "admins", "{{admin_id}}"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Admin",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{superadmin_token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"John Smith Updated\",\n    \"phone\": \"+1234567891\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/admins/{{admin_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "admins", "{{admin_id}}"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Admin",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{superadmin_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/admins/{{admin_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "admins", "{{admin_id}}"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Admin Status",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{superadmin_token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"status\": \"active\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/admins/{{admin_id}}/status",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "admins", "{{admin_id}}", "status"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Reset Admin Password",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{superadmin_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/admins/{{admin_id}}/reset-password",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "admins", "{{admin_id}}", "reset-password"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Resend Admin Credentials",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{superadmin_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/admins/{{admin_id}}/resend-credentials",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "admins", "{{admin_id}}", "resend-credentials"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Admin Conversion Status",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{superadmin_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/admins/{{admin_id}}/conversion-status",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "admins", "{{admin_id}}", "conversion-status"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Admin Statistics",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{superadmin_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/admins-statistics",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "admins-statistics"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Admin Authentication (Phase 1)",
+			"description": "APIs for admin authentication in central database before tenant conversion",
+			"item": [
+				{
+					"name": "Admin Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    const response = pm.response.json();",
+									"    if (response.success && response.data.token) {",
+									"        pm.environment.set('admin_token', response.data.token);",
+									"        console.log('Admin token saved:', response.data.token);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"{{admin_email}}\",\n    \"password\": \"{{admin_password}}\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/admin/auth/login",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "admin", "auth", "login"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Admin User",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{admin_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/admin/auth/user",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "admin", "auth", "user"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Admin Logout",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{admin_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/admin/auth/logout",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "admin", "auth", "logout"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Change Admin Password",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{admin_token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"current_password\": \"admin123\",\n    \"new_password\": \"newpassword123\",\n    \"new_password_confirmation\": \"newpassword123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/admin/auth/change-password",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "admin", "auth", "change-password"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Refresh Admin Token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    const response = pm.response.json();",
+									"    if (response.success && response.data.token) {",
+									"        pm.environment.set('admin_token', response.data.token);",
+									"        console.log('Admin token refreshed:', response.data.token);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{admin_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/admin/auth/refresh",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "admin", "auth", "refresh"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Admin Profile Management (Phase 1)",
+			"description": "APIs for admin profile management before tenant conversion",
+			"item": [
+				{
+					"name": "Get Admin Profile",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{admin_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/admin/profile",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "admin", "profile"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Admin Profile",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{admin_token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Updated Admin Name\",\n    \"phone\": \"+1234567890\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/admin/profile",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "admin", "profile"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Upload Admin Avatar",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{admin_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "avatar",
+									"type": "file",
+									"src": "/path/to/avatar.jpg"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/admin/profile/avatar",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "admin", "profile", "avatar"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get School Setup Status",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{admin_token}}",
+								"type": "text"
+							}
+						],						"url": {
+							"raw": "{{base_url}}/api/v1/admin/profile/school-setup-status",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "admin", "profile", "school-setup-status"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "School Setup Management (Phase 1 to 2)",
+			"description": "APIs for school creation and admin-to-tenant conversion",
+			"item": [
+				{
+					"name": "Get School Setup Form",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{admin_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/admin/school-setup",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "admin", "school-setup"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create School (Convert to Tenant)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{admin_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "school_name",
+									"value": "Greenwood High School",
+									"type": "text"
+								},
+								{
+									"key": "school_email",
+									"value": "admin@greenwood.edu",
+									"type": "text"
+								},
+								{
+									"key": "school_phone",
+									"value": "+1234567890",
+									"type": "text"
+								},
+								{
+									"key": "school_address",
+									"value": "123 Education Street, Learning City, LC 12345",
+									"type": "text"
+								},
+								{
+									"key": "preferred_domain",
+									"value": "greenwood",
+									"type": "text"
+								},
+								{
+									"key": "subscription_plan",
+									"value": "basic",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/admin/school-setup",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "admin", "school-setup"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get School Setup Status",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{admin_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/admin/school-setup/status",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "admin", "school-setup", "status"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Cancel School Setup",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{admin_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/admin/school-setup/cancel",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "admin", "school-setup", "cancel"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Retry Failed School Setup",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{admin_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "school_name",
+									"value": "Retry School Name",
+									"type": "text"
+								},
+								{
+									"key": "school_email",
+									"value": "retry@school.edu",
+									"type": "text"
+								},
+								{
+									"key": "subscription_plan",
+									"value": "basic",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/admin/school-setup/retry",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "admin", "school-setup", "retry"]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://superadmin.localhost",
+			"type": "string"
+		},
+		{
+			"key": "admin_id",
+			"value": "1",
+			"type": "string"
+		},
+		{
+			"key": "admin_email",
+			"value": "admin1@example.com",
+			"type": "string"
+		},
+		{
+			"key": "admin_password",
+			"value": "admin123",
+			"type": "string"
+		}
+	]
+}
